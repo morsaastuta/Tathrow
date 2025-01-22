@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class SlotBehaviour : MonoBehaviour
 {
+    [SerializeField] public bool client;
     public CardBehaviour card;
-    float maxDistance = 100f;
+    float maxDistance = 30f;
 
     void Update()
     {
@@ -22,8 +23,9 @@ public class SlotBehaviour : MonoBehaviour
         card.Link(this);
     }
 
-    void OnTriggerEnter2D(Collider2D collider)
+    void OnTriggerStay2D(Collider2D collider)
     {
-        if (card == null && collider.GetComponent<CardBehaviour>()) Link(collider.GetComponent<CardBehaviour>());
+        if (card == null && collider.GetComponent<CardBehaviour>() && collider.GetComponent<CardBehaviour>().linkedSlot.client != client)
+            Link(collider.GetComponent<CardBehaviour>());
     }
 }

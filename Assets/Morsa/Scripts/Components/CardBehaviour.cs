@@ -2,29 +2,25 @@ using DG.Tweening;
 using System.Collections;
 using Unity.Multiplayer.Center.Common;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class CardBehaviour : MonoBehaviour
 {
     [SerializeField] public Card card;
     bool flipped = false;
     bool selected = false;
-    float throwForce = 5f;
+    float throwForce = 8f;
 
     public bool untouchable = false;
 
     [SerializeField] Rigidbody2D body;
     [SerializeField] SpriteRenderer renderer;
 
-    SlotBehaviour linkedSlot;
+    public SlotBehaviour linkedSlot;
 
     void Start()
     {
         renderer.sprite = card.image;
-    }
-
-    void Update()
-    {
-
     }
 
     public void Link(SlotBehaviour slot)
@@ -45,14 +41,18 @@ public class CardBehaviour : MonoBehaviour
 
     public void Throw(Vector2 direction)
     {
-        if (!flipped) body.linearVelocity = direction.normalized * throwForce;
-        else body.linearVelocity = -direction.normalized * throwForce;
+        body.linearVelocity = direction.normalized * throwForce;
     }
 
     public void Slide(Vector2 position)
     {
         body.linearVelocity = Vector2.zero;
         transform.DOMove(position, 1f);
+    }
+
+    public void Enlarge()
+    {
+        transform.DOScale(1.2f, 0.5f);
     }
 
     public void Select()
@@ -64,5 +64,6 @@ public class CardBehaviour : MonoBehaviour
     public void Deselect()
     {
         selected = false;
+        transform.DOScale(1, 0.5f);
     }
 }

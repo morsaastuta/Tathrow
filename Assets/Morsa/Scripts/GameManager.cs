@@ -1,5 +1,7 @@
 using DG.Tweening;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -7,9 +9,17 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    int touchTimer = 0;
-    Vector2 lastTouchPos = new();
-    float throwThreshold = 3;
+    float touchTimer = 0;
+    bool enlarged = false;
+    Vector2 initTouchPos = new();
+    float timeThreshold = 0.16f;
+    float throwThreshold = 30f;
+
+    [Header("Descriptor")]
+    [SerializeField] GameObject descriptor;
+    [SerializeField] TextMeshPro dName;
+    [SerializeField] TextMeshPro dDescription;
+    [SerializeField] TextMeshPro dProperties;
 
     [Header("Slots")]
     [SerializeField] List<SlotBehaviour> handSlots;
@@ -46,41 +56,52 @@ public class GameManager : MonoBehaviour
         // If the player is touching with ONE finger, project raycast and select card if collided
         if (Input.touchCount == 1)
         {
-            lastTouchPos = Input.GetTouch(0).position;
 
             switch (Input.GetTouch(0).phase)
             {
                 case TouchPhase.Began:
-                    Vector3 castPos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+                    initTouchPos = Input.GetTouch(0).position;
+                    Vector3 castPos = Camera.main.ScreenToWorldPoint(initTouchPos);
                     Vector2 touchPos = new(castPos.x, castPos.y);
                     Collider2D hit = Physics2D.OverlapPoint(touchPos);
-                    if (hit && hit.GetComponent<CardBehaviour>()) Select(hit.GetComponent<CardBehaviour>());
+                    if (hit && hit.GetComponent<CardBehaviour>() && !hit.GetComponent<CardBehaviour>().linkedSlot.client)
+                    {
+                        Select(hit.GetComponent<CardBehaviour>());
+                    }
                     break;
 
                 case TouchPhase.Moved:
-                    Debug.Log("moved");
-                    if (selectedCard != null && Vector2.Distance(Input.GetTouch(0).position, lastTouchPos) > throwThreshold)
+                    if (selectedCard != null && touchTimer > timeThreshold && Vector2.Distance(Input.GetTouch(0).position, initTouchPos) > throwThreshold)
                     {
-                        Debug.Log("thrown");
-                        selectedCard.Throw(Input.GetTouch(0).position - lastTouchPos);
+                        selectedCard.Throw(Input.GetTouch(0).position - initTouchPos);
                         Deselect();
                     }
                     break;
 
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
-                    Debug.Log("untouched");
-                    if (selectedCard != null) Debug.Log("deselected");
-                    Deselect();
+                    if (selectedCard != null)
+                    {
+                        if (!selectedCard.untouchable && touchTimer < timeThreshold) StartCoroutine(selectedCard.Flip());
+                        Deselect();
+                    }
                     break;
             }
         }
 
         if (selectedCard != null)
         {
-            touchTimer++;
-            if (!selectedCard.untouchable && Input.GetTouch(0).tapCount == 1) StartCoroutine(selectedCard.Flip());
-            lastTouchPos = Input.GetTouch(0).position;
+            touchTimer += Time.deltaTime;
+            if (!enlarged && touchTimer >= timeThreshold)
+            {
+                enlarged = true;
+                selectedCard.Enlarge();
+                dName.SetText(selectedCard.card.name);
+                dDescription.SetText(selectedCard.card.description);
+                foreach (string property in selectedCard.card.properties) {
+                    dProperties.text += property + "\n";
+                }
+            }
         }
     }
 
@@ -117,7 +138,11 @@ public class GameManager : MonoBehaviour
             Debug.Log(card);
         }
 
-        foreach (CardBehaviour card in hand) handSlots[hand.IndexOf(card)].Link(card);
+        foreach (CardBehaviour card in hand)
+        {
+            handSlots[hand.IndexOf(card)].Link(card);
+            if (Random.Range(0f, 1f) > 0.5f) StartCoroutine(card.Flip());
+        }
     }
 
     public void Select(CardBehaviour card)
@@ -128,6 +153,7 @@ public class GameManager : MonoBehaviour
 
     public void Deselect()
     {
+        enlarged = false;
         touchTimer = 0;
         selectedCard = null;
         foreach (CardBehaviour card in hand) card.Deselect();
