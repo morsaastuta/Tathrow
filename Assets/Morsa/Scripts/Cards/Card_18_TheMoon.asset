@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: La Luna
   id: 18
-  description: 
+  description: La amenaza entre las sombras.
+  uprightProperties: 0d00000005000000
+  flippedProperties: 0100000003000000
   image: {fileID: 21300000, guid: a49cfe53714542a43a5356cada973c6f, type: 3}

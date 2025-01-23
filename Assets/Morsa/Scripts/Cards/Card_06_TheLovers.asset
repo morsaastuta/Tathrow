@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Los Enamorados
   id: 6
-  description: 
+  description: Las pruebas del amor.
+  uprightProperties: 040000000a000000
+  flippedProperties: 090000000d000000
   image: {fileID: 21300000, guid: 627738d3734ef9d429a07bb440ed8d35, type: 3}

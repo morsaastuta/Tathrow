@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: La Emperatriz
   id: 3
-  description: 
+  description: El dominio sobre lo femenino y lo natural.
+  uprightProperties: 0400000006000000
+  flippedProperties: 0900000005000000
   image: {fileID: 21300000, guid: 49d925dc04435f748a6971a7ab788750, type: 3}

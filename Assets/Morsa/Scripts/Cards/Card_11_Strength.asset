@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: La Fuerza
   id: 11
-  description: 
+  description: La toma de control.
+  uprightProperties: 0800000004000000
+  flippedProperties: 0f00000005000000
   image: {fileID: 21300000, guid: 637808b3be6a426469591d8ce4f7cc22, type: 3}

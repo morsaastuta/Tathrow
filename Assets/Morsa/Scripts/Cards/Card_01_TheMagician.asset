@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: El Mago
   id: 1
-  description: 
+  description: El enlace entre lo vulgar y lo divino.
+  uprightProperties: 0a00000002000000
+  flippedProperties: 0b00000003000000
   image: {fileID: 21300000, guid: 5eec8796450645247bb5056201783109, type: 3}

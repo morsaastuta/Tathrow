@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: El Sol
   id: 19
-  description: 
+  description: "La luz tras el t\xFAnel."
+  uprightProperties: 0200000004000000
+  flippedProperties: 0900000011000000
   image: {fileID: 21300000, guid: 514fca0b1891b9b4c9c730baea29d174, type: 3}

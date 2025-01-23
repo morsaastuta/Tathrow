@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: La Torre
   id: 16
-  description: 
+  description: El cambio disruptivo.
+  uprightProperties: 0000000011000000
+  flippedProperties: 0300000007000000
   image: {fileID: 21300000, guid: 311f25b0c82313449b28f9fbbf31d720, type: 3}

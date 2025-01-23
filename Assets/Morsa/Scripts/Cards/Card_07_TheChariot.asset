@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: El Carro
   id: 7
-  description: 
+  description: "La superaci\xF3n por medio de la determinaci\xF3n."
+  uprightProperties: 1000000006000000
+  flippedProperties: 1100000005000000
   image: {fileID: 21300000, guid: 66f40f05d1c1dc44ab0a0048cbbd904e, type: 3}

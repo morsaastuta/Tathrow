@@ -1,9 +1,8 @@
 using DG.Tweening;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using static Glossary;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,10 +15,11 @@ public class GameManager : MonoBehaviour
     float throwThreshold = 30f;
 
     [Header("Descriptor")]
-    [SerializeField] GameObject descriptor;
+    [SerializeField] SpriteRenderer dScreen;
     [SerializeField] TextMeshPro dName;
     [SerializeField] TextMeshPro dDescription;
     [SerializeField] TextMeshPro dProperties;
+    [SerializeField] TextMeshPro dInverted;
 
     [Header("Slots")]
     [SerializeField] List<SlotBehaviour> handSlots;
@@ -54,9 +54,8 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // If the player is touching with ONE finger, project raycast and select card if collided
-        if (Input.touchCount == 1)
+        if (Input.touchCount >= 1)
         {
-
             switch (Input.GetTouch(0).phase)
             {
                 case TouchPhase.Began:
@@ -64,14 +63,11 @@ public class GameManager : MonoBehaviour
                     Vector3 castPos = Camera.main.ScreenToWorldPoint(initTouchPos);
                     Vector2 touchPos = new(castPos.x, castPos.y);
                     Collider2D hit = Physics2D.OverlapPoint(touchPos);
-                    if (hit && hit.GetComponent<CardBehaviour>() && !hit.GetComponent<CardBehaviour>().linkedSlot.client)
-                    {
-                        Select(hit.GetComponent<CardBehaviour>());
-                    }
+                    if (hit && hit.GetComponent<CardBehaviour>()) Select(hit.GetComponent<CardBehaviour>());
                     break;
 
                 case TouchPhase.Moved:
-                    if (selectedCard != null && touchTimer > timeThreshold && Vector2.Distance(Input.GetTouch(0).position, initTouchPos) > throwThreshold)
+                    if (selectedCard != null && !selectedCard.linkedSlot.client && touchTimer > timeThreshold && Vector2.Distance(Input.GetTouch(0).position, initTouchPos) > throwThreshold)
                     {
                         selectedCard.Throw(Input.GetTouch(0).position - initTouchPos);
                         Deselect();
@@ -82,7 +78,7 @@ public class GameManager : MonoBehaviour
                 case TouchPhase.Canceled:
                     if (selectedCard != null)
                     {
-                        if (!selectedCard.untouchable && touchTimer < timeThreshold) StartCoroutine(selectedCard.Flip());
+                        if (!selectedCard.linkedSlot.client && !selectedCard.untouchable && touchTimer < timeThreshold) StartCoroutine(selectedCard.Flip());
                         Deselect();
                     }
                     break;
@@ -96,11 +92,6 @@ public class GameManager : MonoBehaviour
             {
                 enlarged = true;
                 selectedCard.Enlarge();
-                dName.SetText(selectedCard.card.name);
-                dDescription.SetText(selectedCard.card.description);
-                foreach (string property in selectedCard.card.properties) {
-                    dProperties.text += property + "\n";
-                }
             }
         }
     }
@@ -149,6 +140,18 @@ public class GameManager : MonoBehaviour
     {
         card.Select();
         selectedCard = card;
+
+        dName.SetText(selectedCard.card.title);
+        dDescription.SetText(selectedCard.card.description);
+        dProperties.SetText(selectedCard.GetProperties());
+        if (!selectedCard.flipped) dInverted.SetText("");
+        else dInverted.SetText("Invertida");
+
+        dScreen.DOColor(new Color(0, 0, 0, 0.5f), 0.5f);
+        dName.DOColor(new Color(255, 255, 255, 1f), 0.5f);
+        dDescription.DOColor(new Color(255, 255, 255, 1f), 0.5f);
+        dProperties.DOColor(new Color(255, 255, 255, 1f), 0.5f);
+        dInverted.DOColor(new Color(255, 255, 255, 1f), 0.5f);
     }
 
     public void Deselect()
@@ -156,6 +159,13 @@ public class GameManager : MonoBehaviour
         enlarged = false;
         touchTimer = 0;
         selectedCard = null;
+
         foreach (CardBehaviour card in hand) card.Deselect();
+
+        dScreen.DOColor(new Color(0, 0, 0, 0f), 0.5f);
+        dName.DOColor(new Color(255, 255, 255, 0f), 0.5f);
+        dDescription.DOColor(new Color(255, 255, 255, 0f), 0.5f);
+        dProperties.DOColor(new Color(255, 255, 255, 0f), 0.5f);
+        dInverted.DOColor(new Color(255, 255, 255, 0f), 0.5f);
     }
 }

@@ -1,13 +1,12 @@
 using DG.Tweening;
 using System.Collections;
-using Unity.Multiplayer.Center.Common;
 using UnityEngine;
-using UnityEngine.XR;
+using static Glossary;
 
 public class CardBehaviour : MonoBehaviour
 {
     [SerializeField] public Card card;
-    bool flipped = false;
+    public bool flipped = false;
     bool selected = false;
     float throwForce = 8f;
 
@@ -55,15 +54,25 @@ public class CardBehaviour : MonoBehaviour
         transform.DOScale(1.2f, 0.5f);
     }
 
+    public string GetProperties()
+    {
+        string properties = "";
+        if (!flipped) foreach (Property property in card.uprightProperties) properties += GetProperty(property) + "\n";
+        else foreach (Property property in card.flippedProperties) properties += GetProperty(property) + "\n";
+        return properties;
+    }
+
     public void Select()
     {
         GameManager.instance.Deselect();
+        renderer.sortingOrder = 2;
         selected = true;
     }
 
     public void Deselect()
     {
         selected = false;
+        renderer.sortingOrder = 0;
         transform.DOScale(1, 0.5f);
     }
 }

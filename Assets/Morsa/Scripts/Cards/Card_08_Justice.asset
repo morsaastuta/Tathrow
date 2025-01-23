@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: La Justicia
   id: 8
-  description: 
+  description: El triunfo de la equidad y la verdad.
+  uprightProperties: 0e00000002000000
+  flippedProperties: 0f0000000d000000
   image: {fileID: 21300000, guid: df66fe2d36379af4db3d2a639e77c214, type: 3}

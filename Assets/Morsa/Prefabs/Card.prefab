@@ -48,8 +48,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   card: {fileID: 11400000, guid: 5d9513899961a5641b9ffc1a6ce11d1e, type: 2}
+  untouchable: 0
   body: {fileID: 3348523984738852662}
   renderer: {fileID: 4966954733845925169}
+  linkedSlot: {fileID: 0}
 --- !u!212 &4966954733845925169
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -102,7 +104,7 @@ SpriteRenderer:
   m_Size: {x: 0.2, y: 0.2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!50 &3348523984738852662

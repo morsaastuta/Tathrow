@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: El Mundo
   id: 21
-  description: 
+  description: El destino final.
+  uprightProperties: 1000000001000000
+  flippedProperties: 070000000a000000
   image: {fileID: 21300000, guid: 78da7b6698f86ff458a89b05966ef48c, type: 3}

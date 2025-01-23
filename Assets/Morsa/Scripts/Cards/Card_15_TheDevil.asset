@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: El Diablo
   id: 15
-  description: 
+  description: "La destrucci\xF3n desmedida."
+  uprightProperties: 0f00000007000000
+  flippedProperties: 020000000c000000
   image: {fileID: 21300000, guid: 0fffc83fff0df6d45880927954f7e227, type: 3}

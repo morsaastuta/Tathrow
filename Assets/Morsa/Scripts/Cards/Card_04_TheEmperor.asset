@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: El Emperador
   id: 4
-  description: 
+  description: El ego del hombre.
+  uprightProperties: 0800000002000000
+  flippedProperties: 0700000003000000
   image: {fileID: 21300000, guid: 6e3000146330988419c40fbb1b553952, type: 3}

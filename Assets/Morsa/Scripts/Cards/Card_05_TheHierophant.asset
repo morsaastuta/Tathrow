@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: El Hierofante
   id: 5
-  description: 
+  description: La autoridad de lo divino.
+  uprightProperties: 080000000c000000
+  flippedProperties: 070000000d000000
   image: {fileID: 21300000, guid: 0ab28dc9ff5bc5f4daf5da9af5bf0b63, type: 3}

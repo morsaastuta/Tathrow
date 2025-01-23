@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: La Templanza
   id: 14
-  description: 
+  description: El equilibrio y el auto-control.
+  uprightProperties: 0e00000004000000
+  flippedProperties: 0f0000000b000000
   image: {fileID: 21300000, guid: ecdfc4631ed4f014eb83bb3155d5abfe, type: 3}
