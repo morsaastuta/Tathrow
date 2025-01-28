@@ -7,6 +7,12 @@ using static Glossary;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    int score = 0;
+
+    public void Score(int s)
+    {
+        score += s;
+    }
 
     float touchTimer = 0;
     bool enlarged = false;
@@ -35,6 +41,13 @@ public class GameManager : MonoBehaviour
     public CardBehaviour pastCard;
     public CardBehaviour presentCard;
     public CardBehaviour futureCard;
+
+    [Header("Clients")]
+    [SerializeField] Transform initPosition;
+    [SerializeField] Transform corePosition;
+    [SerializeField] Transform exitPosition;
+    [SerializeField] GameObject clientPrefab;
+    GameObject currentClient;
 
     void Awake()
     {
@@ -100,11 +113,31 @@ public class GameManager : MonoBehaviour
     {
         Deselect();
 
-        foreach (CardBehaviour card in hand) deck.Add(card.card);
+        foreach (CardBehaviour card in hand)
+        {
+            deck.Add(card.card);
+            card.Discard();
+        }
 
-        if (pastCard != null) deck.Add(pastCard.card);
-        if (presentCard != null) deck.Add(presentCard.card);
-        if (futureCard != null) deck.Add(futureCard.card);
+        if (pastCard != null)
+        {
+            deck.Add(pastCard.card);
+            pastCard.Discard();
+        }
+
+        if (presentCard != null)
+        {
+            deck.Add(presentCard.card);
+            presentCard.Discard();
+        }
+
+        if (futureCard != null)
+        {
+            deck.Add(futureCard.card);
+            futureCard.Discard();
+        }
+
+        WalkOut();
     }
 
     public void NextRound()
@@ -134,6 +167,25 @@ public class GameManager : MonoBehaviour
             handSlots[hand.IndexOf(card)].Link(card);
             if (Random.Range(0f, 1f) > 0.5f) StartCoroutine(card.Flip());
         }
+
+        // Create client
+        currentClient = Instantiate(clientPrefab);
+        currentClient.transform.position = initPosition.position;
+        currentClient.transform.localScale = new(0.6f,0.6f,1);
+        WalkIn();
+    }
+
+    public void WalkIn()
+    {
+        currentClient.transform.DOMove(corePosition.position, 1f);
+        currentClient.transform.DOScale(1, 1f);
+    }
+
+    public void WalkOut()
+    {
+        currentClient.transform.DOMove(corePosition.position, 1f);
+        currentClient.transform.DOScale(0.6f, 1f);
+        Destroy(currentClient, 1f);
     }
 
     public void Select(CardBehaviour card)

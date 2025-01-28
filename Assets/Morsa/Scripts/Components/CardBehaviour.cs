@@ -75,4 +75,12 @@ public class CardBehaviour : MonoBehaviour
         renderer.sortingOrder = 0;
         transform.DOScale(1, 0.5f);
     }
+
+    public void Discard()
+    {
+        untouchable = true;
+        body.linearVelocityY = -4f;
+        linkedSlot.Unlink();
+        Destroy(gameObject, 1f);
+    }
 }

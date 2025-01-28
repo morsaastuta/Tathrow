@@ -1,3 +1,4 @@
+using UnityEngine;
 
 public static class Glossary
 {
@@ -37,6 +38,31 @@ public static class Glossary
             Property.Gain => "Beneficio",
             Property.Loss => "Pérdida",
             _ => ""
+        };
+    }
+
+    public static Property GetRandomProperty()
+    {
+        return Random.Range(0,18) switch
+        {
+            0 => Property.Beginning,
+            1 => Property.End,
+            2 => Property.Confidence,
+            3 => Property.Anxiety,
+            4 => Property.Destiny,
+            5 => Property.Uncertainty,
+            6 => Property.Fertility,
+            7 => Property.Disease,
+            8 => Property.Courage,
+            9 => Property.Rigidity,
+            10 => Property.Power,
+            11 => Property.Dependence,
+            12 => Property.Esotericism,
+            13 => Property.Falsehood,
+            14 => Property.Order,
+            15 => Property.Chaos,
+            16 => Property.Gain,
+            17 => Property.Loss
         };
     }
 }
