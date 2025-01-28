@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -109,8 +110,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EndRound()
+    public IEnumerator EndRound()
     {
+        yield return new WaitForSeconds(1f);
+
         Deselect();
 
         foreach (CardBehaviour card in hand)
@@ -118,6 +121,8 @@ public class GameManager : MonoBehaviour
             deck.Add(card.card);
             card.Discard();
         }
+
+        hand.Clear();
 
         if (pastCard != null)
         {
@@ -138,6 +143,8 @@ public class GameManager : MonoBehaviour
         }
 
         WalkOut();
+
+        Invoke("NextRound", 1.5f);
     }
 
     public void NextRound()
@@ -158,8 +165,6 @@ public class GameManager : MonoBehaviour
 
             // Remove drawn card from DECK
             deck.RemoveAt(draw);
-
-            Debug.Log(card);
         }
 
         foreach (CardBehaviour card in hand)
@@ -171,21 +176,22 @@ public class GameManager : MonoBehaviour
         // Create client
         currentClient = Instantiate(clientPrefab);
         currentClient.transform.position = initPosition.position;
-        currentClient.transform.localScale = new(0.6f,0.6f,1);
+        currentClient.transform.localScale = new Vector3(0.5f, 0.5f, 1);
         WalkIn();
     }
 
     public void WalkIn()
     {
-        currentClient.transform.DOMove(corePosition.position, 1f);
-        currentClient.transform.DOScale(1, 1f);
+        currentClient.GetComponent<ClientBehaviour>().SetProperties(pastSlot, presentSlot, futureSlot);
+        currentClient.transform.DOMove(corePosition.position, 1.2f);
+        currentClient.transform.DOScale(new Vector3(1, 1, 1), 1.2f);
     }
 
     public void WalkOut()
     {
-        currentClient.transform.DOMove(corePosition.position, 1f);
-        currentClient.transform.DOScale(0.6f, 1f);
-        Destroy(currentClient, 1f);
+        currentClient.transform.DOMove(exitPosition.position, 1.2f);
+        currentClient.transform.DOScale(new Vector3(0.5f, 0.5f, 1), 1.2f);
+        Destroy(currentClient, 1.2f);
     }
 
     public void Select(CardBehaviour card)

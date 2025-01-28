@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static Glossary;
 
 public class CardBehaviour : MonoBehaviour
@@ -11,6 +12,7 @@ public class CardBehaviour : MonoBehaviour
     float throwForce = 8f;
 
     public bool untouchable = false;
+    public bool linkable = true;
 
     [SerializeField] Rigidbody2D body;
     [SerializeField] SpriteRenderer renderer;
@@ -30,7 +32,6 @@ public class CardBehaviour : MonoBehaviour
 
     public IEnumerator Flip()
     {
-        Debug.Log("flips");
         untouchable = true;
         flipped = !flipped;
         transform.DORotate(transform.rotation.eulerAngles + new Vector3(0, 0, 180), 0.5f);
@@ -65,7 +66,7 @@ public class CardBehaviour : MonoBehaviour
     public void Select()
     {
         GameManager.instance.Deselect();
-        renderer.sortingOrder = 2;
+        renderer.sortingOrder = 3;
         selected = true;
     }
 
@@ -78,8 +79,9 @@ public class CardBehaviour : MonoBehaviour
 
     public void Discard()
     {
+        linkable = false;
         untouchable = true;
-        body.linearVelocityY = -4f;
+        body.linearVelocityY = -12f;
         linkedSlot.Unlink();
         Destroy(gameObject, 1f);
     }

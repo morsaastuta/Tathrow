@@ -25,7 +25,12 @@ public class SlotBehaviour : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D collider)
     {
-        if (card == null && collider.GetComponent<CardBehaviour>() && collider.GetComponent<CardBehaviour>().linkedSlot.client != client)
+        if (card == null &&
+            collider.GetComponent<CardBehaviour>() &&
+            collider.GetComponent<CardBehaviour>().linkable &&
+            collider.GetComponent<CardBehaviour>().linkedSlot.client != client)
+        {
             Link(collider.GetComponent<CardBehaviour>());
+        }
     }
 }
