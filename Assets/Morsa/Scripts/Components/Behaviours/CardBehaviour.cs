@@ -65,7 +65,7 @@ public class CardBehaviour : MonoBehaviour
 
     public void Select()
     {
-        GameManager.instance.Deselect();
+        RoundManager.instance.Deselect();
         renderer.sortingOrder = 3;
         selected = true;
     }

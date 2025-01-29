@@ -5,9 +5,9 @@ using TMPro;
 using UnityEngine;
 using static Glossary;
 
-public class GameManager : MonoBehaviour
+public class RoundManager : MonoBehaviour
 {
-    public static GameManager instance;
+    public static RoundManager instance;
     int score = 0;
 
     public void Score(int s)
@@ -60,9 +60,14 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    void Start()
+    public void Begin()
     {
         NextRound();
+    }
+
+    public void Exit()
+    {
+
     }
 
     void Update()
@@ -145,6 +150,40 @@ public class GameManager : MonoBehaviour
         WalkOut();
 
         Invoke("NextRound", 1.5f);
+    }
+
+    public void AbortRound()
+    {
+
+        Deselect();
+
+        foreach (CardBehaviour card in hand)
+        {
+            deck.Add(card.card);
+            card.Discard();
+        }
+
+        hand.Clear();
+
+        if (pastCard != null)
+        {
+            deck.Add(pastCard.card);
+            pastCard.Discard();
+        }
+
+        if (presentCard != null)
+        {
+            deck.Add(presentCard.card);
+            presentCard.Discard();
+        }
+
+        if (futureCard != null)
+        {
+            deck.Add(futureCard.card);
+            futureCard.Discard();
+        }
+
+        WalkOut();
     }
 
     public void NextRound()

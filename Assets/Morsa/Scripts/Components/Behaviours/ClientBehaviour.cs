@@ -35,7 +35,7 @@ public class ClientBehaviour : MonoBehaviour
         {
             scored = true;
             Score();
-            StartCoroutine(GameManager.instance.EndRound());
+            StartCoroutine(RoundManager.instance.EndRound());
         }
     }
 
@@ -102,7 +102,7 @@ public class ClientBehaviour : MonoBehaviour
             else score--;
         }
 
-        GameManager.instance.Score(totalScore);
+        RoundManager.instance.Score(totalScore);
         Debug.Log(totalScore);
     }
 }
