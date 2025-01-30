@@ -11,17 +11,25 @@ public class MenuController : MonoBehaviour
     [SerializeField] GameObject pane_roundSelector;
     [SerializeField] GameObject pane_beginPrompt;
     [SerializeField] GameObject pane_quitPrompt;
-    [SerializeField] GameObject pane_exitPrompt;
+
+    void Start()
+    {
+        MainSelector();
+    }
 
     public void Game()
     {
+        RoundSelector();
+
         foreach (GameObject go in hiddenOnStart) go.SetActive(true);
 
-        RoundManager.instance.NextRound();
+        RoundManager.instance.Begin();
     }
 
     public void End()
     {
+        MainSelector();
+        
         RoundManager.instance.AbortRound();
 
         foreach (GameObject go in hiddenOnStart) go.SetActive(false);
@@ -29,13 +37,13 @@ public class MenuController : MonoBehaviour
 
     public void MainSelector()
     {
-        ClearHistory();
+        RestartHistory();
         AdvancePane(pane_mainSelector);
     }
 
     public void RoundSelector()
     {
-        ClearHistory();
+        RestartHistory();
         AdvancePane(pane_roundSelector);
     }
 
@@ -46,30 +54,28 @@ public class MenuController : MonoBehaviour
 
     public void QuitPrompt()
     {
+        RoundManager.instance.BlockHand();
         AdvancePane(pane_quitPrompt);
-    }
-
-    public void ExitPrompt()
-    {
-        AdvancePane(pane_exitPrompt);
     }
 
     public void AdvancePane(GameObject pane)
     {
-        paneHistory[paneHistory.Count - 1].SetActive(false);
+        if (paneHistory.Count > 0) paneHistory[paneHistory.Count - 1].SetActive(false);
         pane.SetActive(true);
         paneHistory.Add(pane);
     }
 
     public void ReturnPane()
     {
+        RoundManager.instance.ReleaseHand();
+
         paneHistory[paneHistory.Count - 1].SetActive(false);
         paneHistory[paneHistory.Count - 2].SetActive(true);
 
         paneHistory.RemoveAt(paneHistory.Count - 1);
     }
 
-    public void ClearHistory()
+    public void RestartHistory()
     {
         for (int i = 0; i < paneHistory.Count; i++)
         {

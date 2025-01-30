@@ -9,10 +9,36 @@ public class RoundManager : MonoBehaviour
 {
     public static RoundManager instance;
     int score = 0;
+    bool playing = false;
+
+    [SerializeField] TextMeshProUGUI scoreboard;
 
     public void Score(int s)
     {
         score += s;
+        scoreboard.SetText(score.ToString());
+    }
+
+    public void ClearScore()
+    {
+        score = 0;
+        scoreboard.SetText(score.ToString());
+    }
+
+    public void BlockHand()
+    {
+        foreach (CardBehaviour card in hand) card.untouchable = true;
+        if (pastCard != null) pastCard.untouchable = true;
+        if (presentCard != null) presentCard.untouchable = true;
+        if (futureCard != null) futureCard.untouchable = true;
+    }
+
+    public void ReleaseHand()
+    {
+        foreach (CardBehaviour card in hand) card.untouchable = false;
+        if (pastCard != null) pastCard.untouchable = false;
+        if (presentCard != null) presentCard.untouchable = false;
+        if (futureCard != null) futureCard.untouchable = false;
     }
 
     float touchTimer = 0;
@@ -62,12 +88,48 @@ public class RoundManager : MonoBehaviour
 
     public void Begin()
     {
+        playing = true;
+
+        ClearScore();
         NextRound();
     }
 
-    public void Exit()
+    public void AbortRound()
     {
+        if (playing)
+        {
+            Deselect();
 
+            foreach (CardBehaviour card in hand)
+            {
+                deck.Add(card.card);
+                card.Discard();
+            }
+
+            hand.Clear();
+
+            if (pastCard != null)
+            {
+                deck.Add(pastCard.card);
+                pastCard.Discard();
+            }
+
+            if (presentCard != null)
+            {
+                deck.Add(presentCard.card);
+                presentCard.Discard();
+            }
+
+            if (futureCard != null)
+            {
+                deck.Add(futureCard.card);
+                futureCard.Discard();
+            }
+
+            if (currentClient != null) Destroy(currentClient);
+        }
+
+        playing = false;
     }
 
     void Update()
@@ -81,8 +143,8 @@ public class RoundManager : MonoBehaviour
                     initTouchPos = Input.GetTouch(0).position;
                     Vector3 castPos = Camera.main.ScreenToWorldPoint(initTouchPos);
                     Vector2 touchPos = new(castPos.x, castPos.y);
-                    Collider2D hit = Physics2D.OverlapPoint(touchPos);
-                    if (hit && hit.GetComponent<CardBehaviour>()) Select(hit.GetComponent<CardBehaviour>());
+                    Collider2D hit = Physics2D.OverlapPoint(touchPos, ~LayerMask.GetMask("Slot"));
+                    if (hit && hit.GetComponent<CardBehaviour>() && !hit.GetComponent<CardBehaviour>().untouchable) Select(hit.GetComponent<CardBehaviour>());
                     break;
 
                 case TouchPhase.Moved:
@@ -117,120 +179,98 @@ public class RoundManager : MonoBehaviour
 
     public IEnumerator EndRound()
     {
-        yield return new WaitForSeconds(1f);
-
-        Deselect();
-
-        foreach (CardBehaviour card in hand)
+        if (playing)
         {
-            deck.Add(card.card);
-            card.Discard();
+            yield return new WaitForSeconds(1f);
+
+            Deselect();
+
+            foreach (CardBehaviour card in hand)
+            {
+                deck.Add(card.card);
+                card.Discard();
+            }
+
+            hand.Clear();
+
+            if (pastCard != null)
+            {
+                deck.Add(pastCard.card);
+                pastCard.Discard();
+            }
+
+            if (presentCard != null)
+            {
+                deck.Add(presentCard.card);
+                presentCard.Discard();
+            }
+
+            if (futureCard != null)
+            {
+                deck.Add(futureCard.card);
+                futureCard.Discard();
+            }
+
+            WalkOut();
+
+            Invoke("NextRound", 1.5f);
         }
-
-        hand.Clear();
-
-        if (pastCard != null)
-        {
-            deck.Add(pastCard.card);
-            pastCard.Discard();
-        }
-
-        if (presentCard != null)
-        {
-            deck.Add(presentCard.card);
-            presentCard.Discard();
-        }
-
-        if (futureCard != null)
-        {
-            deck.Add(futureCard.card);
-            futureCard.Discard();
-        }
-
-        WalkOut();
-
-        Invoke("NextRound", 1.5f);
-    }
-
-    public void AbortRound()
-    {
-
-        Deselect();
-
-        foreach (CardBehaviour card in hand)
-        {
-            deck.Add(card.card);
-            card.Discard();
-        }
-
-        hand.Clear();
-
-        if (pastCard != null)
-        {
-            deck.Add(pastCard.card);
-            pastCard.Discard();
-        }
-
-        if (presentCard != null)
-        {
-            deck.Add(presentCard.card);
-            presentCard.Discard();
-        }
-
-        if (futureCard != null)
-        {
-            deck.Add(futureCard.card);
-            futureCard.Discard();
-        }
-
-        WalkOut();
     }
 
     public void NextRound()
     {
-        // Until the hand has 6 cards...
-        while (hand.Count < 6)
+        if (playing)
         {
-            // Draw random card from DECK
-            int draw = Random.Range(0, deck.Count);
+            // Until the hand has 6 cards...
+            while (hand.Count < 6)
+            {
+                // Draw random card from DECK
+                int draw = Random.Range(0, deck.Count);
 
-            // Instantiate drawn card
-            GameObject card = Instantiate(cardPrefab);
-            card.GetComponent<CardBehaviour>().card = deck[draw];
-            card.transform.position = handSlots[hand.Count].transform.position;
+                // Instantiate drawn card
+                GameObject card = Instantiate(cardPrefab);
+                card.GetComponent<CardBehaviour>().card = deck[draw];
+                card.transform.position = handSlots[hand.Count].transform.position;
 
-            // Add drawn card to HAND
-            hand.Add(card.GetComponent<CardBehaviour>());
+                // Add drawn card to HAND
+                hand.Add(card.GetComponent<CardBehaviour>());
 
-            // Remove drawn card from DECK
-            deck.RemoveAt(draw);
+                // Remove drawn card from DECK
+                deck.RemoveAt(draw);
+            }
+
+            foreach (CardBehaviour card in hand)
+            {
+                handSlots[hand.IndexOf(card)].Link(card);
+                if (Random.Range(0f, 1f) > 0.5f) StartCoroutine(card.Flip());
+            }
+
+            // Create client
+            currentClient = Instantiate(clientPrefab);
+            currentClient.transform.position = initPosition.position;
+            currentClient.transform.localScale = new Vector3(0.5f, 0.5f, 1);
+            WalkIn();
         }
-
-        foreach (CardBehaviour card in hand)
-        {
-            handSlots[hand.IndexOf(card)].Link(card);
-            if (Random.Range(0f, 1f) > 0.5f) StartCoroutine(card.Flip());
-        }
-
-        // Create client
-        currentClient = Instantiate(clientPrefab);
-        currentClient.transform.position = initPosition.position;
-        currentClient.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-        WalkIn();
     }
 
     public void WalkIn()
     {
-        currentClient.GetComponent<ClientBehaviour>().SetProperties(pastSlot, presentSlot, futureSlot);
-        currentClient.transform.DOMove(corePosition.position, 1.2f);
-        currentClient.transform.DOScale(new Vector3(1, 1, 1), 1.2f);
+        if (playing)
+        {
+            currentClient.GetComponent<ClientBehaviour>().SetProperties(pastSlot, presentSlot, futureSlot);
+            currentClient.transform.DOMove(corePosition.position, 1.2f);
+            currentClient.transform.DOScale(new Vector3(1, 1, 1), 1.2f);
+        }
     }
 
     public void WalkOut()
     {
-        currentClient.transform.DOMove(exitPosition.position, 1.2f);
-        currentClient.transform.DOScale(new Vector3(0.5f, 0.5f, 1), 1.2f);
-        Destroy(currentClient, 1.2f);
+        if (playing)
+        {
+            currentClient.transform.DOMove(exitPosition.position, 1.2f);
+            currentClient.transform.DOScale(new Vector3(0.5f, 0.5f, 1), 1.2f);
+            Destroy(currentClient, 1.2f);
+        }
     }
 
     public void Select(CardBehaviour card)
@@ -244,11 +284,11 @@ public class RoundManager : MonoBehaviour
         if (!selectedCard.flipped) dInverted.SetText("");
         else dInverted.SetText("Invertida");
 
-        dScreen.DOColor(new Color(0, 0, 0, 0.5f), 0.5f);
-        dName.DOColor(new Color(255, 255, 255, 1f), 0.5f);
-        dDescription.DOColor(new Color(255, 255, 255, 1f), 0.5f);
-        dProperties.DOColor(new Color(255, 255, 255, 1f), 0.5f);
-        dInverted.DOColor(new Color(255, 255, 255, 1f), 0.5f);
+        dScreen.DOColor(new(0, 0, 0, 0.7f), 0.5f);
+        dName.DOColor(new(1, 1, 1, 1f), 0.5f);
+        dDescription.DOColor(new(1, 1, 1, 1), 0.5f);
+        dProperties.DOColor(new(1, 1, 1, 1), 0.5f);
+        dInverted.DOColor(new(1, 0.5f, 0.5f, 1), 0.5f);
     }
 
     public void Deselect()
@@ -259,10 +299,10 @@ public class RoundManager : MonoBehaviour
 
         foreach (CardBehaviour card in hand) card.Deselect();
 
-        dScreen.DOColor(new Color(0, 0, 0, 0f), 0.5f);
-        dName.DOColor(new Color(255, 255, 255, 0f), 0.5f);
-        dDescription.DOColor(new Color(255, 255, 255, 0f), 0.5f);
-        dProperties.DOColor(new Color(255, 255, 255, 0f), 0.5f);
-        dInverted.DOColor(new Color(255, 255, 255, 0f), 0.5f);
+        dScreen.DOColor(new(0, 0, 0, 0), 0.5f);
+        dName.DOColor(new(1, 1, 1, 0), 0.5f);
+        dDescription.DOColor(new(1, 1, 1, 0), 0.5f);
+        dProperties.DOColor(new(1, 1, 1, 0), 0.5f);
+        dInverted.DOColor(new(1, 0.5f, 0.5f, 0), 0.5f);
     }
 }

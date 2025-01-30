@@ -36,7 +36,7 @@ public static class Glossary
             Property.Order => "Orden",
             Property.Chaos => "Caos",
             Property.Gain => "Beneficio",
-            Property.Loss => "P�rdida",
+            Property.Loss => "Pérdida",
             _ => ""
         };
     }

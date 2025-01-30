@@ -78,7 +78,7 @@ public class SpeechBehaviour : MonoBehaviour
                     case Property.Disease: sp = "Cada vez puedo comprar menos comida..."; break;
                     case Property.End: sp = "No parece que vaya a durar mucho más en mi puesto..."; break;
                     case Property.Esotericism: sp = "Siento que algo mágico está a punto de ocurrir."; break;
-                    case Property.Falsehood: sp = "Estoy esperando ganancias valiosas, esta nueva inversión es mi última esperanza."; break;
+                    case Property.Falsehood: sp = "El viaje que gané en la lotería no me huele muy legal."; break;
                     case Property.Fertility: sp = "Parece que el próximo invierno habrá buena cosecha."; break;
                     case Property.Gain: sp = "Querría cumplir mis objetivos."; break;
                     case Property.Loss: sp = "Mi relación con mis padres va cada vez a peor, no creo que merezca la pena seguir así."; break;

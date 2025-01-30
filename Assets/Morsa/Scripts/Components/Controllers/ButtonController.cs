@@ -1,35 +1,49 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [Header("Static")]
-    [SerializeField] SpriteRenderer renderer;
-    [SerializeField] Sprite off;
+    [Header("Text")]
+    [SerializeField] TextMeshProUGUI textBox;
+    [SerializeField] string text;
+
+    [Header("Image")]
+    [SerializeField] Image renderer;
+    [SerializeField] Sprite exit;
     [SerializeField] Sprite hover;
     [SerializeField] Sprite press;
 
-    [Header("Animated")]
-    [SerializeField] Animator animator;
+    void Start()
+    {
+        textBox.SetText(text);
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (animator) animator.SetBool("hover", true);
-
-        if (renderer) renderer.sprite = hover;
+        renderer.sprite = hover;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (animator) animator.SetBool("hover", false);
-
-        if (renderer) renderer.sprite = off;
+        renderer.sprite = exit;
     }
     
     public void Press()
     {
-        if (animator) animator.SetBool("click", true);
+        GetComponentInParent<AudioSource>().Play();
+        Debug.Log("pressed");
+        renderer.sprite = press;
+    }
 
-        if (renderer) renderer.sprite = press;
+    void OnDisable()
+    {
+        renderer.sprite = exit;
+    }
+
+    void OnEnable()
+    {
+        renderer.sprite = exit;
     }
 }

@@ -14,8 +14,15 @@ public class CardBehaviour : MonoBehaviour
     public bool untouchable = false;
     public bool linkable = true;
 
+    [Header("Card")]
     [SerializeField] Rigidbody2D body;
     [SerializeField] SpriteRenderer renderer;
+
+    [Header("Audio")]
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip clip_flip;
+    [SerializeField] AudioClip clip_throw;
+    [SerializeField] AudioClip clip_slide;
 
     public SlotBehaviour linkedSlot;
 
@@ -32,6 +39,9 @@ public class CardBehaviour : MonoBehaviour
 
     public IEnumerator Flip()
     {
+        audioSource.clip = clip_flip;
+        audioSource.Play();
+
         untouchable = true;
         flipped = !flipped;
         transform.DORotate(transform.rotation.eulerAngles + new Vector3(0, 0, 180), 0.5f);
@@ -41,6 +51,9 @@ public class CardBehaviour : MonoBehaviour
 
     public void Throw(Vector2 direction)
     {
+        audioSource.clip = clip_throw;
+        audioSource.Play();
+
         body.linearVelocity = direction.normalized * throwForce;
     }
 
@@ -79,6 +92,9 @@ public class CardBehaviour : MonoBehaviour
 
     public void Discard()
     {
+        audioSource.clip = clip_slide;
+        audioSource.Play();
+
         linkable = false;
         untouchable = true;
         body.linearVelocityY = -12f;

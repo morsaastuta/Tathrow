@@ -81,24 +81,24 @@ public class ClientBehaviour : MonoBehaviour
 
         int totalScore = 0;
 
-        int score = 3;
+        int score = 1;
         foreach (Property p in past)
         {
-            if (pastSlot.card.GetProperties().Contains(GetProperty(p))) totalScore += score;
+            if (score > 0 && pastSlot.card.GetProperties().Contains(GetProperty(p))) totalScore += score;
             else score--;
         }
 
-        score = 3;
+        score = 1;
         foreach (Property p in present)
         {
-            if (presentSlot.card.GetProperties().Contains(GetProperty(p))) totalScore += score;
+            if (score > 0 && presentSlot.card.GetProperties().Contains(GetProperty(p))) totalScore += score;
             else score--;
         }
 
-        score = 3;
+        score = 1;
         foreach (Property p in future)
         {
-            if (futureSlot.card.GetProperties().Contains(GetProperty(p))) totalScore += score;
+            if (score > 0 && futureSlot.card.GetProperties().Contains(GetProperty(p))) totalScore += score;
             else score--;
         }
 
